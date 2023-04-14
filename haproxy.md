@@ -118,10 +118,10 @@ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/us
 ![alt text](https://github.com/feferran/proxy-server/blob/main/haproxy-container.png "haproxy container")
 
 
-## haproxy dashboard
+## HAProxy stats dashboard
 Haproxy service has a web interface where you can check the traffic stats/data received by the host, available here:
 
-[http://\<ip-address>\:50000/stats](http://<ip-address>:50000/stats)
+[http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
 * The interface look like this:
 ![alt text](https://github.com/feferran/proxy-server/blob/main/haproxy-dashboard.png "haproxy dashboard")
