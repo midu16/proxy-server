@@ -120,6 +120,7 @@ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/us
 
 ## haproxy dashboard
 Haproxy service has a web interface where you can check the traffic stats/data received by the host, available here:
+
 [http://\<ip-address>\:50000/stats](http://<ip-address>:50000/stats)
 
 * The interface look like this:
