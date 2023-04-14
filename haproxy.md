@@ -5,7 +5,7 @@ We have a host configured with ipv4 interfaces and we need to connect to another
 
 
 ## Solution
-Implement a haproxy solution, deploying the haproxy as a pod.
+Implement a HAProxy solution, deploying it as a container.
 
 The proxy will be hearing at some ports and depending in our configuration, it will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
 
