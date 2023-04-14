@@ -114,8 +114,10 @@ This will deploy one pod named **haproxy** that will be our reverse proxy.
 ```
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
-
+![alt text](https://github.com/feferran/proxy-server/blob/main/haproxy-container.png "haproxy container")
 
 ## haproxy dashboard
 Haproxy service has a web interface where you can connect to get the traffic stats/data received by the host, available here:
 [http://\<ip-address>\:50000/stats](http://<ip-address>:50000/stats)
+
+![alt text](https://github.com/feferran/proxy-server/blob/main/haproxy-dashboard.png "haproxy dashboard")
