@@ -1,7 +1,7 @@
-# Configure a reverse proxy to enable the connectivity between an ipv4 host to an ipv6 cluster
+# Configure a reverse proxy to enable the connectivity between an IPv4 host to an IPv6 cluster
 
 ## Need
-We have a host configured with ipv4 interfaces and we need to connect to another host configured with IPv6 interfaces.
+We have a host configured with IPv4 interfaces and we need to connect to another host configured with IPv6 interfaces.
 
 
 ## Solution
@@ -74,7 +74,7 @@ You will need to repeat this section, for each individual port: **80** (http), *
 
 This section defines relevant parameters for the OCP requests:
 * proxy will be hearing at port **6443** for **IPv4** traffic.
-* requests to **cluster-name** (ocp-disconnected.fede.ipv6.lab) will be redirected to what is **is_cluster0** label.
+* requests to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is **is_cluster0** label.
 * **cluster0-6443** will be linked with **is_cluster0** label.
 ```
 frontend main6443
@@ -83,7 +83,7 @@ frontend main6443
     tcp-request inspect-delay 3s
     tcp-request content capture req.ssl_sni len 100
     log-format "capture0: %[capture.req.hdr(0)]"
-    acl is_cluster0 req.ssl_sni -m reg ocp-disconnected.fede.ipv6.lab
+    acl is_cluster0 req.ssl_sni -m reg ocp-disconnected.fede.IPv6.lab
     use_backend cluster0-6443 if is_cluster0
     default_backend cluster0-6443
 ```
