@@ -106,8 +106,8 @@ backend cluster0-6443
 ```
 
 
-## Create the haproxy pod
-This will deploy one container named **haproxy** that will be our reverse proxy.
+## Create the HAProxy container
+This will deploy one container named **haproxy** that will perform a reverse proxy role.
 
 * Run this command:
 ```
