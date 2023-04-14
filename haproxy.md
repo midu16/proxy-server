@@ -15,8 +15,7 @@ The proxy will be hearing at some ports and depending in our configuration, it w
 * By default the file will be placed at this path:
 ```/etc/haproxy/haproxy.cfg```
 
-### Usage
-#### global
+### global
 This section defines global parameters that will apply to the whole configuration.
 ```
 global
@@ -32,7 +31,7 @@ global
     ssl-default-server-ciphers PROFILE=SYSTEM
 ```
 
-#### defaults
+### defaults
 This section defines default values set for some parameters.
 
 Copy like this, nothing needs to be modified.
@@ -55,7 +54,7 @@ defaults
     maxconn                 3000
 ```
 
-#### frontend (stats)
+### frontend (stats)
 This section defines relevant parameters:
 * proxy will be hearing at port **50.000** for **IPv4** traffic.
 * stats dashboard will be available on **/stats**.
@@ -70,7 +69,7 @@ frontend stats
     mode http
 ```
 
-#### frontend
+### frontend
 You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
 
 This section defines relevant parameters for the OCP requests:
@@ -89,7 +88,7 @@ frontend main6443
     default_backend cluster0-6443
 ```
 
-#### backend
+### backend
 You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
 
 This section includes the hosts that will receive the requests forwarded to port **6443**.
