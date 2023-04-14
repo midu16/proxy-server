@@ -1,4 +1,4 @@
-# Configure a reverse proxy to enable the conectivity between an ipv4 source to an ipv6 cluster
+# Configure a reverse proxy to enable the connectivity between an ipv4 host to an ipv6 cluster
 
 ## Need
 We have a host configured with ipv4 interfaces and we need to connect to another host configured with IPv6 interfaces.
