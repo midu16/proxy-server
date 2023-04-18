@@ -115,7 +115,7 @@ Executing the following command will deploy one container named **haproxy** that
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
 
-* The deployed container will be like this:
+The deployed container will be like this:
 ![alt text](./docs/haproxy-container.png "haproxy container")
 
 
@@ -132,5 +132,5 @@ HAProxy service has a web interface where you can check the traffic stats/data r
 
 [http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
-* The interface look like this:
+The stats interface looks like this:
 ![alt text](./docs/haproxy-dashboard.png "haproxy dashboard")
