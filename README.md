@@ -1,6 +1,6 @@
 # Configure a reverse proxy to enable the connectivity between an IPv4 host to an IPv6 cluster
 
-## Need
+## Use case
 We have a host configured with IPv4 interfaces and we need to connect to another host configured with IPv6 interfaces.
 
 
@@ -8,6 +8,8 @@ We have a host configured with IPv4 interfaces and we need to connect to another
 Implement a HAProxy solution, deploying it as a container.
 
 The proxy will be hearing at some ports and depending in our configuration, it will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
+
+**Onwards the available Cluster's hosts IPv6 subnet will be reachable from the other host IPv4 subnet.**
 
 
 ## Configuration file
@@ -55,7 +57,7 @@ defaults
 ```
 
 ### frontend (stats)
-This section defines relevant parameters:
+<ins>This section defines relevant parameters:</ins>
 * proxy will be hearing at port **50.000** for **IPv4** traffic.
 * stats dashboard will be available on **/stats**.
 * user/password to grant access.
@@ -72,7 +74,7 @@ frontend stats
 ### frontend
 You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
 
-This section defines relevant parameters for the OCP requests:
+<ins>This section defines relevant parameters for the OCP requests:</ins>
 * proxy will be hearing at port **6443** for **IPv4** traffic.
 * requests to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is **is_cluster0** label.
 * **cluster0-6443** will be linked with **is_cluster0** label.
@@ -107,9 +109,8 @@ backend cluster0-6443
 
 
 ## Create the HAProxy container
-This will deploy one container named **haproxy** that will perform a reverse proxy role.
+Executing the following command will deploy one container named **haproxy** that will perform a reverse proxy role.
 
-* Run this command:
 ```
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
@@ -118,8 +119,16 @@ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/us
 ![alt text](./docs/haproxy-container.png "haproxy container")
 
 
+### Podman run: understanding parameters employ
+* -d (detach) --> run in the background.
+* rm -->  automatically remove the container when already exits.
+* --network --> **host** means that the container will not create a network namespace, instead of this the container will use the host's network.
+* -v (volume) --> create a bind-mount. configuration file path (host) : configuration file path (container) : The host and the container will share the volumen content.
+* image-name to be used to create the container: image-version.
+
+
 ## HAProxy stats dashboard
-Haproxy service has a web interface where you can check the traffic stats/data received by the host, available here:
+HAProxy service has a web interface where you can check the traffic stats/data received by the host, available here:
 
 [http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
