@@ -122,16 +122,17 @@ Execute the following command to deploy a container named **haproxy** that will 
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
 
+<ins>Podman arguments:</ins>
+* -d (detach) --> run in background.
+* --name --> new container's name.
+* rm -->  automatically remove the container when already exist.
+* --network --> **host** means that the container will not create a network namespace, instead of this the container will use the host's network.
+* -v (volume) --> create a bind-mount. configuration file path (host) : configuration file path (container) : (z) the host and the container share the volumen content.
+* image-name to be used to create the container: image-version.
+
+
 The deployed haproxy container will look like this:
 ![alt text](./docs/haproxy-container.png "haproxy container")
-
-
-### Podman run: understanding parameters employ
-* -d (detach) --> run in the background.
-* rm -->  automatically remove the container when already exits.
-* --network --> **host** means that the container will not create a network namespace, instead of this the container will use the host's network.
-* -v (volume) --> create a bind-mount. configuration file path (host) : configuration file path (container) : The host and the container will share the volumen content.
-* image-name to be used to create the container: image-version.
 
 
 ## HAProxy stats dashboard
@@ -140,5 +141,5 @@ HAProxy service has a web interface where you can check the traffic stats/data r
 [http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
 
-The stats interface (for HAProxy v2.3) looks like this:
+The stats interface (for HAProxy version 2.3) looks like this:
 ![alt text](./docs/haproxy-dashboard.png "haproxy dashboard")
