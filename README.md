@@ -16,6 +16,7 @@ _After the implementation of this solution, the available Cluster's hosts IPv6 s
 * To provide the proxy we need to include some configuration located at the **haproxy.cfg** configuration file.
 * This configuration file can be placed by default at this path:
 ```/etc/haproxy/haproxy.cfg```
+* Include in the configuration file the following parameter sections:
 
 ### global
 This section defines global parameters that will apply to the whole configuration.
