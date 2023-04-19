@@ -85,7 +85,7 @@ _Repeat this section for each configured listening port: **80** (http), **443** 
 
 <ins>Relevant parameters:</ins>
 * bind --> the proxy will be listening at port **6443** for **IPv4** traffic.
-* mode --> http (can be http/tcp).
+* mode --> tcp (can be http/tcp).
 * acl --> the requests made to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is related to the **is_cluster0** label.
 * use_backend --> the backend **cluster0-6443** label will be linked with the **is_cluster0** label.
 * default_backend --> by default redirect traffic to **cluster0-6443**.
