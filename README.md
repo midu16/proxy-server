@@ -116,7 +116,7 @@ backend cluster0-6443
 
 
 ## Create the HAProxy container
-Execute the following command to deploy a container named **haproxy** that will perform the reverse proxy role.
+Execute the following command to deploy the HAProxy container named **haproxy**, that will perform the reverse proxy role.
 
 ```
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
@@ -131,12 +131,12 @@ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/us
 * image-name to be used to create the container: image-version.
 
 
-The deployed haproxy container will look like this:
+If we check the containers, the deployed haproxy container will look like this:
 ![alt text](./docs/haproxy-container.png "haproxy container")
 
 
 ## HAProxy stats dashboard
-HAProxy service has a web interface where you can check the traffic stats/data received by the host, available here:
+HAProxy service has a web interface where you can check the traffic stats/data received by the host, available on the link below:
 
 [http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
