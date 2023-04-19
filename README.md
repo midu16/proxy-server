@@ -1,24 +1,26 @@
 # Configure a reverse proxy to enable the connectivity between an IPv4 host to an IPv6 cluster
 
 ## Use case
-We have a host configured with IPv4 interfaces and we need to connect to another cluster/host configured with IPv6 interfaces.
+We have a host configured with IPv4 only interfaces and we need to connect to another cluster/host configured with IPv6 only interfaces.
 
 
 ## Solution
-Implement a HAProxy solution, deploying it as a container. Can be configured as a service in the IPv4 host, but this out of the scope of this document.
+Implement a HAProxy solution, deploying it as a container. Can be configured as a service in the IPv4 host, but this is out of the scope for this document.
 
 The proxy will be listening at some ports and depending in our configuration, will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
 
-**Onwards the available Cluster's hosts IPv6 subnet will be reachable from the other host IPv4 subnet.**
+_After the implementation of this solution, the available Cluster's hosts IPv6 subnet will be reachable from the other host IPv4 subnet._
 
 
 ## Configuration file
-* To provide the proxy we need to include some configuration at the **haproxy.cfg** configuration file.
-* By default the file will be placed at this path:
+* To provide the proxy we need to include some configuration located at the **haproxy.cfg** configuration file.
+* This configuration file can be placed by default at this path:
 ```/etc/haproxy/haproxy.cfg```
 
 ### global
 This section defines global parameters that will apply to the whole configuration.
+
+_Copy like this, nothing needs to be modified._
 ```
 global
     log 127.0.0.1 local0 
@@ -34,9 +36,9 @@ global
 ```
 
 ### defaults
-This section sets default values for some parameters.
+This section sets default values for some connection related parameters.
 
-Copy like this, nothing needs to be modified.
+_Copy like this, nothing needs to be modified._
 ```
 defaults
     log                     global
@@ -57,7 +59,9 @@ defaults
 ```
 
 ### frontend (stats)
-<ins>This section defines relevant parameters:</ins>
+This section defines relevant parameters related to the web stats interface (see below).
+
+<ins>Relevant parameters:</ins>
 * proxy will be hearing at port **50.000** for **IPv4** traffic.
 * stats dashboard will be available on **/stats**.
 * user/password to grant access.
@@ -72,9 +76,11 @@ frontend stats
 ```
 
 ### frontend
-You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
+This section links the frontend configuration with the backend configuration.
 
-<ins>This section defines relevant parameters for OCP requests:</ins>
+_Repeat this section for each configured listening port: **80** (http), **443** (https), **6443** (ocp)._
+
+<ins>Relevant parameters:</ins>
 * proxy will be hearing at port **6443** for **IPv4** traffic.
 * requests to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is **is_cluster0** label.
 * **cluster0-6443** will be linked with **is_cluster0** label.
@@ -91,10 +97,11 @@ frontend main6443
 ```
 
 ### backend
-You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
+This section includes the hosts that will receive the requests forwarded to IPv6.
 
-This section includes the hosts that will receive the requests forwarded to port **6443**.
+_Repeat this section for each configured listening port: **80** (http), **443** (https), **6443** (ocp)._
 
+<ins>Relevant parameters:</ins>
 * **balance:** source --> means that if one client request was forwarded to cluster0-master0, next request from the same client will be forwarded again to the same host until is unavailable.
 * **mode**: tcp --> can be tcp or http.
 * Include one **server** line for every host included in the cluster.
@@ -109,7 +116,7 @@ backend cluster0-6443
 
 
 ## Create the HAProxy container
-Executing the following command will deploy one container named **haproxy** that will perform a reverse proxy role.
+Execute the following command to deploy a container named **haproxy** that will perform the reverse proxy role.
 
 ```
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
