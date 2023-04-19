@@ -62,9 +62,12 @@ defaults
 This section defines relevant parameters related to the web stats interface (see below).
 
 <ins>Relevant parameters:</ins>
-* the proxy will be listening at port **50.000** for **IPv4** traffic.
-* stats dashboard will be available on **/stats**.
-* user/password to grant access to the web interface.
+* bind --> interface will be http accessible at port **50.000**.
+* enable --> stats interface is now available.
+* uri --> url to access stats dashboard will be **/stats**.
+* auth --> user/password to grant access to the web interface.
+* refresh --> data is refreshed every 10 seconds.
+* mode --> http (can be http/tcp).
 ```
 frontend stats 
     bind *:50000
@@ -81,9 +84,11 @@ This section links the frontend configuration with the backend configuration.
 _Repeat this section for each configured listening port: **80** (http), **443** (https), **6443** (ocp)._
 
 <ins>Relevant parameters:</ins>
-* the proxy will be listening at port **6443** for **IPv4** traffic.
-* the requests made to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is related to the **is_cluster0** label.
-* the backend **cluster0-6443** label will be linked with the **is_cluster0** label.
+* bind --> the proxy will be listening at port **6443** for **IPv4** traffic.
+* mode --> http (can be http/tcp).
+* acl --> the requests made to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is related to the **is_cluster0** label.
+* use_backend --> the backend **cluster0-6443** label will be linked with the **is_cluster0** label.
+* default_backend --> by default redirect traffic to **cluster0-6443**.
 ```
 frontend main6443
     bind *:6443
@@ -102,9 +107,9 @@ This section includes the hosts that will receive the requests forwarded to IPv6
 _Repeat this section for each configured listening port: **80** (http), **443** (https), **6443** (ocp)._
 
 <ins>Relevant parameters:</ins>
-* **balance:** source --> means that if one client request was forwarded to cluster0-master0, next request from the same client will be forwarded to the same host until the host will be unavailable.
-* **mode**: tcp --> can have tcp or http values.
-* Add one **server** row for every host included in the cluster.
+* balance --> source, means that if one client request was forwarded to cluster0-master0, next request from the same client will be forwarded to the same host until the host will be unavailable.
+* mode --> tcp (can be http/tcp).
+* server --> Add one row for every host included in the cluster.
 ```
 backend cluster0-6443
     balance source
