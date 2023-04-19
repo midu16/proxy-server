@@ -131,7 +131,7 @@ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/us
 * image-name to be used to create the container: image-version.
 
 
-If we check the containers, the deployed haproxy container will look like this:
+If we check the deployed containers, the haproxy container will look like this:
 ![alt text](./docs/haproxy-container.png "haproxy container")
 
 
