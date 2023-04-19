@@ -1,13 +1,13 @@
 # Configure a reverse proxy to enable the connectivity between an IPv4 host to an IPv6 cluster
 
 ## Use case
-We have a host configured with IPv4 interfaces and we need to connect to another host configured with IPv6 interfaces.
+We have a host configured with IPv4 interfaces and we need to connect to another cluster/host configured with IPv6 interfaces.
 
 
 ## Solution
-Implement a HAProxy solution, deploying it as a container.
+Implement a HAProxy solution, deploying it as a container. Can be configured as a service in the IPv4 host, but this out of the scope of this document.
 
-The proxy will be hearing at some ports and depending in our configuration, it will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
+The proxy will be listening at some ports and depending in our configuration, will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
 
 **Onwards the available Cluster's hosts IPv6 subnet will be reachable from the other host IPv4 subnet.**
 
@@ -34,7 +34,7 @@ global
 ```
 
 ### defaults
-This section defines default values set for some parameters.
+This section sets default values for some parameters.
 
 Copy like this, nothing needs to be modified.
 ```
@@ -74,7 +74,7 @@ frontend stats
 ### frontend
 You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
 
-<ins>This section defines relevant parameters for the OCP requests:</ins>
+<ins>This section defines relevant parameters for OCP requests:</ins>
 * proxy will be hearing at port **6443** for **IPv4** traffic.
 * requests to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is **is_cluster0** label.
 * **cluster0-6443** will be linked with **is_cluster0** label.
@@ -115,7 +115,7 @@ Executing the following command will deploy one container named **haproxy** that
 podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
 
-The deployed container will be like this:
+The deployed haproxy container will look like this:
 ![alt text](./docs/haproxy-container.png "haproxy container")
 
 
@@ -132,5 +132,6 @@ HAProxy service has a web interface where you can check the traffic stats/data r
 
 [http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
-The stats interface looks like this:
+
+The stats interface (for HAProxy v2.3) looks like this:
 ![alt text](./docs/haproxy-dashboard.png "haproxy dashboard")
