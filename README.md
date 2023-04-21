@@ -1,22 +1,27 @@
 # Configure a reverse proxy to enable the connectivity between an IPv4 host to an IPv6 cluster
 
-## Need
-We have a host configured with IPv4 interfaces and we need to connect to another host configured with IPv6 interfaces.
+## Use case
+We have a host configured with IPv4 only interfaces and we need to connect to another cluster/host configured with IPv6 only interfaces.
 
 
 ## Solution
-Implement a HAProxy solution, deploying it as a container.
+Implement a HAProxy solution, deploying it as a container. Can be configured as a service in the IPv4 host, but this is out of the scope for this document.
 
-The proxy will be hearing at some ports and depending in our configuration, it will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
+The proxy will be listening at some ports and depending in our configuration, will redirect the received traffic from **IPv4** to the desired **IPv6** configured hosts.
+
+_After the implementation of this solution, the available Cluster's hosts IPv6 subnet will be reachable from the other host IPv4 subnet._
 
 
 ## Configuration file
-* To provide the proxy we need to include some configuration at the **haproxy.cfg** configuration file.
-* By default the file will be placed at this path:
+* To provide the proxy we need to include some configuration located at the **haproxy.cfg** configuration file.
+* This configuration file can be placed by default at this path:
 ```/etc/haproxy/haproxy.cfg```
+* Include in the configuration file the following parameter sections:
 
 ### global
 This section defines global parameters that will apply to the whole configuration.
+
+_Copy like this, nothing needs to be modified._
 ```
 global
     log 127.0.0.1 local0 
@@ -32,9 +37,9 @@ global
 ```
 
 ### defaults
-This section defines default values set for some parameters.
+This section sets default values for some connection related parameters.
 
-Copy like this, nothing needs to be modified.
+_Copy like this, nothing needs to be modified._
 ```
 defaults
     log                     global
@@ -55,10 +60,15 @@ defaults
 ```
 
 ### frontend (stats)
-This section defines relevant parameters:
-* proxy will be hearing at port **50.000** for **IPv4** traffic.
-* stats dashboard will be available on **/stats**.
-* user/password to grant access.
+This section defines relevant parameters related to the web stats interface (see below).
+
+<ins>Relevant parameters:</ins>
+* bind --> interface will be http accessible at port **50.000**.
+* enable --> stats interface is now available.
+* uri --> url to access stats dashboard will be **/stats**.
+* auth --> user/password to grant access to the web interface.
+* refresh --> data is refreshed every 10 seconds.
+* mode --> http (can be http/tcp).
 ```
 frontend stats 
     bind *:50000
@@ -70,12 +80,16 @@ frontend stats
 ```
 
 ### frontend
-You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
+This section links the frontend configuration with the backend configuration.
 
-This section defines relevant parameters for the OCP requests:
-* proxy will be hearing at port **6443** for **IPv4** traffic.
-* requests to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is **is_cluster0** label.
-* **cluster0-6443** will be linked with **is_cluster0** label.
+_Repeat this section for each configured listening port: **80** (http), **443** (https), **6443** (ocp)._
+
+<ins>Relevant parameters:</ins>
+* bind --> the proxy will be listening at port **6443** for **IPv4** traffic.
+* mode --> tcp (can be http/tcp).
+* acl --> the requests made to **cluster-name** (ocp-disconnected.fede.IPv6.lab) will be redirected to what is related to the **is_cluster0** label.
+* use_backend --> the backend **cluster0-6443** label will be linked with the **is_cluster0** label.
+* default_backend --> by default redirect traffic to **cluster0-6443**.
 ```
 frontend main6443
     bind *:6443
@@ -89,13 +103,14 @@ frontend main6443
 ```
 
 ### backend
-You will need to repeat this section, for each individual port: **80** (http), **443** (https), **6443** (ocp).
+This section includes the hosts that will receive the requests forwarded to IPv6.
 
-This section includes the hosts that will receive the requests forwarded to port **6443**.
+_Repeat this section for each configured listening port: **80** (http), **443** (https), **6443** (ocp)._
 
-* **balance:** source --> means that if one client request was forwarded to cluster0-master0, next request from the same client will be forwarded again to the same host until is unavailable.
-* **mode**: tcp --> can be tcp or http.
-* Include one **server** line for every host included in the cluster.
+<ins>Relevant parameters:</ins>
+* balance --> source, means that if one client request was forwarded to cluster0-master0, next request from the same client will be forwarded to the same host until the host will be unavailable.
+* mode --> tcp (can be http/tcp).
+* server --> Add one row for every host included in the cluster.
 ```
 backend cluster0-6443
     balance source
@@ -107,21 +122,30 @@ backend cluster0-6443
 
 
 ## Create the HAProxy container
-This will deploy one container named **haproxy** that will perform a reverse proxy role.
+Execute the following command to deploy the HAProxy container named **haproxy**, that will perform the reverse proxy role.
 
-* Run this command:
-```
-podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
+```bash
+$ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
 
-* The deployed container will be like this:
+<ins>Podman arguments:</ins>
+* -d (detach) --> run in background.
+* --name --> new container's name.
+* rm -->  automatically remove the container when already exist.
+* --network --> **host** means that the container will not create a network namespace, instead of this the container will use the host's network.
+* -v (volume) --> create a bind-mount. configuration file path (host) : configuration file path (container) : (z) the host and the container share the volumen content.
+* image-name to be used to create the container: image-version.
+
+
+If we check the deployed containers, the haproxy container will look like this:
 ![alt text](./docs/haproxy-container.png "haproxy container")
 
 
 ## HAProxy stats dashboard
-Haproxy service has a web interface where you can check the traffic stats/data received by the host, available here:
+HAProxy service has a web interface where you can check the traffic stats/data received by the host, available on the link below:
 
 [http://\<cluster-api-ip-address>\:50000/stats](http://<cluster-api-ip-address>:50000/stats)
 
-* The interface look like this:
+
+The stats interface (for HAProxy version 2.3) looks like this:
 ![alt text](./docs/haproxy-dashboard.png "haproxy dashboard")
