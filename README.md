@@ -124,8 +124,8 @@ backend cluster0-6443
 ## Create the HAProxy container
 Execute the following command to deploy the HAProxy container named **haproxy**, that will perform the reverse proxy role.
 
-```
-podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
+```bash
+$ podman run -d --name haproxy --rm --network host -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:z docker.io/library/haproxy:2.3
 ```
 
 <ins>Podman arguments:</ins>
